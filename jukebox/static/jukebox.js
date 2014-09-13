@@ -52,5 +52,21 @@ function schedule_track(audio, time) {
   node_data["gain_node"] = g_node;
   queued_nodes.push(node_data);
 
+  fade_transition(node_data);
+
   s_node.start(time);
+}
+
+function fade_transition(node_data) {
+  var fade_time = 5; //length of fade in and fade out, in seconds.
+
+  var time = node_data["time"];
+  var duration = node_data["audio"].duration;
+  var g_node = node_data["gain_node"]
+
+  g_node.gain.linearRampToValueAtTime(0, time);
+  g_node.gain.linearRampToValueAtTime(1, time + fade_time);
+
+  g_node.gain.linearRampToValueAtTime(1, time + duration - fade_time);
+  g_node.gain.linearRampToValueAtTime(0, time + duration);
 }

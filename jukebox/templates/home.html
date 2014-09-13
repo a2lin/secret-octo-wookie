@@ -1,8 +1,24 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="/static/view.js"></script>
+        <script src="/static/jukebox.js"></script>
+        <link rel="stylesheet" type="text/css" href="/static/view.css" />
     </head>
     <body>
-        Hello World!
+        <div id=circle-outer>
+            <div id=circle>
+                <div id=wave-outer>
+                    <canvas id=wave>
+                    </canvas>
+                </div>
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" stroke="black" stroke-width="2" fill=white />
+                </svg>
+            </div>
+        </div>
+        <script> $(document).ready(function() {w = new Wave();}) </script>
     </body>
 </html>
