@@ -1,11 +1,15 @@
 import os
 import tornado.ioloop
 import tornado.web
-from handlers.main import MainHandler
+from jukebox.handlers.main import MainHandler
+from jukebox.handlers.debug import DebugHandler
+from jukebox.handlers.music_update import MusicUpdateHandler
 
 
 def main():
     handlers = [
+        (r"/update", MusicUpdateHandler),
+        (r"/debug", DebugHandler),
         (r"/", MainHandler),
     ]
 
