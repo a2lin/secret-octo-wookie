@@ -33,16 +33,11 @@ def keyshift(main_key, song_key):
         keyshift -= 12
     return keyshift
 
-def main(num_beats, directory, outfile):
-    
+def main(num_beats, file_names, outfile):
+    # file_names is an array of file names
     aud = []
-    ff = os.listdir(directory)
-    for f in ff:
-        # collect the files
-        if f.rsplit('.', 1)[1].lower() in ['mp3', 'aif', 'aiff', 'aifc', 'wav']:
-            aud.append(audio.LocalAudioFile(os.path.join(directory,f)))
-            # mind the rate limit
-    
+    for file_path in file_names:
+        aud.append(audio.LocalAudioFile(file_path))
     num_files = len(aud)
     x = audio.AudioQuantumList()
     
@@ -95,7 +90,7 @@ def main(num_beats, directory, outfile):
             b = beats[w%len(beats)]
             b_audio = b.render()
 
-            modifier.shiftPitchSemiTones(b_audio, semitones=keyshift(main_key, song.key.get('value'))) # Fix pitch
+            # modifier.shiftPitchSemiTones(b_audio, semitones=keyshift(main_key, song.key.get('value'))) # Fix pitch
             scaled_beat = dirac.timeScale(b_audio.data, desired_dur * 1.0 / b.duration) # Fix duration for smoothing
             scaled_beat *= norm # Normalize volume
 
@@ -120,8 +115,15 @@ if __name__ == '__main__':
         directory = sys.argv[-3]
         outfile = sys.argv[-2]
         num_beats = int(sys.argv[-1])
+
+        file_list = []
+        ff = os.listdir(directory)
+        for f in ff:
+            # collect the files
+            if f.rsplit('.', 1)[1].lower() in ['mp3', 'aif', 'aiff', 'aifc', 'wav']:
+                file_list.append(os.path.join(directory,f))
     except:
         print usage
         sys.exit(-1)
-    main(num_beats, directory, outfile)
+    main(num_beats, file_list, outfile)
 
