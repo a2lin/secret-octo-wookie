@@ -1,15 +1,20 @@
+import os
 import tornado.ioloop
 import tornado.web
-from handlers import MainHandler
+from handlers.main import MainHandler
 
 
 def main():
-    app = tornado.web.Application(
-            [
-                (r"/", MainHandler),
-            ],
-            )
-    app.listen(8888);
+    handlers = [
+        (r"/", MainHandler),
+    ]
+
+    settings = dict(
+            template_path = os.path.join(os.path.dirname(__file__), "templates")
+    )
+
+    application = tornado.web.Application(handlers, **settings)
+    application.listen(8888);
     tornado.ioloop.IOLoop.instance().start();
 
 
