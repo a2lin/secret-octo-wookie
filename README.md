@@ -13,8 +13,6 @@ source venv/bin/activate
 
 pip install -r requirements.txt
 
-cd jukebox
-
-python -m webapp
+python -m jukebox.webapp
 
 The above will start the application @ localhost:8888.
