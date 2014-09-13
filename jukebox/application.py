@@ -19,8 +19,9 @@ class Application(tornado.web.Application):
             (r"/play", PlayHandler),
             (r"/stats", StatsHandler),
 
-            (r"/update", MusicUpdateHandler), #TODO remove this
-            (r"/debug", DebugHandler), #TODO 
+            #TODO remove update and debug
+            (r"/update", MusicUpdateHandler),
+            (r"/debug", DebugHandler),
 
             (r"/", HomeHandler),
         ]

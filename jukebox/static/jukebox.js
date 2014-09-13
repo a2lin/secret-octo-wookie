@@ -1,60 +1,56 @@
 // JavaScript CrossFading - Audio Object
-var Audio = function(){
-   // use an array as a queue
-  
-   // initialize AudioContext
-   window.AudioContext = window.AudioContext || window.webkitAudioContext;
+// refer to:
+// http://www.html5rocks.com/en/tutorials/webaudio/intro/
 
-   // initialize our variables
-   this.queue = [];
-   this.playing = false;
-   this.audioContext = new AudioContext();
+var fb_tracks = new Firebase("https://blazing-fire-4446.firebaseio.com/tracks");
+var queued_nodes = [];
 
+var context;
+if (typeof AudioContext !== "undefined") {
+   context = new AudioContext();
+} else if (typeof webkitAudioContext !== "undefined") {
+   context = new webkitAudioContext();
+} else {
+   throw new Error('AudioContext not supported. :(');
 }
 
-Audio.prototype.enqueue = function(url) {
+fb_tracks.on("child_added", function(childSnapShot, prevChildName) {
+  var url = childSnapShot.child('url').val();
+  var offset = childSnapShot.child('offset').val();
 
-    // Load the url into a buffer and shove into our queue
-    // (To Be Crossfaded)
-    this.load(url);
+  queue(url, offset);
+});
+
+function queue(url, time) {
+  var request = new XMLHttpRequest();
+
+  request.open('GET', url, true);
+  request.responseType = 'arraybuffer';
+
+  request.onload = function() {
+    context.decodeAudioData(request.response, function(buffer) {
+      schedule_track(buffer, time);
+    });
+  }
+
+  request.send();
 }
 
-Audio.prototype.play = function() {
-    if (this.playing != false) {
-        var nextBuffer = this.queue.shift();
-        var source = this.audioContext.createBufferSource();
-        source.buffer = nextBuffer;
-        source.connect(this.audioContext.destination);
-        source.start(0);
+function schedule_track(audio, time) {
+  var s_node = context.createBufferSource();
+  var g_node = context.createGain();
+  var d_node = context.destination;
 
-        if (this.queue.length > 0) {
-            this.play();
-        }
-    }
+  s_node.buffer = audio;
+  s_node.connect(g_node);
+  g_node.connect(d_node);
+
+  var node_data = {}
+  node_data["audio"] = audio;
+  node_data["time"] = time;
+  node_data["source_node"] = s_node;
+  node_data["gain_node"] = g_node;
+  queued_nodes.push(node_data);
+
+  s_node.start(time);
 }
-
-Audio.prototype.load = function(url) {
-    var tempBuffer = null;
-
-    var request = new XMLHttpRequest();
-    request.open('GET', url, true);
-    request.responseType = 'arraybuffer';
-    
-    request.onload = function() {
-        context.decodeAudioData(request.response, function(buffer) {
-
-            // Enforce a length limit on the queue so it doesn't get huge
-            
-            if (this.queue.length < 10) {
-                // Add the newly-loaded buffer
-                this.queue.push(this.load(url));
-
-                // Try to play (all buffers are loaded async)
-                this.play();
-            }
-
-        }, onError);
-    }
-    request.send();
-}
-
