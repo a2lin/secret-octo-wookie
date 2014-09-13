@@ -1,7 +1,11 @@
 import os
 import tornado.web
 
-from jukebox.handlers.main import MainHandler
+from jukebox.handlers.play import PlayHandler
+from jukebox.handlers.stats import StatsHandler
+
+from jukebox.handlers.home import HomeHandler
+
 from jukebox.handlers.debug import DebugHandler
 from jukebox.handlers.music_update import MusicUpdateHandler
 
@@ -12,9 +16,13 @@ class Application(tornado.web.Application):
         self.music = []
 
         handlers=[
-            (r"/update", MusicUpdateHandler),
-            (r"/debug", DebugHandler),
-            (r"/", MainHandler),
+            (r"/play", PlayHandler),
+            (r"/stats", StatsHandler),
+
+            (r"/update", MusicUpdateHandler), #TODO remove this
+            (r"/debug", DebugHandler), #TODO 
+
+            (r"/", HomeHandler),
         ]
 
         settings = dict(
