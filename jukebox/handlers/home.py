@@ -1,6 +1,6 @@
 import tornado.web
 
-class MainHandler(tornado.web.RequestHandler):
+class HomeHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("home.html")
 
