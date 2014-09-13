@@ -1,0 +1,16 @@
+#circle-outer {
+    width: 55%;
+    height: 55%;
+    display: block;
+    margin: auto;
+}
+
+#circle-outer #wave {
+    top: 43%;
+    width: 38.5%;
+    margin-left: 8%;
+    height: 20%;
+    background: orange;
+    position: absolute;
+}
+
