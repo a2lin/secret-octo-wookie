@@ -54,10 +54,10 @@ class TwilioHandler(tornado.web.RequestHandler):
         next_song = Firebase(FIREBASE_URL + 'next_song/')
         if len(body) == 2 and body[0].lower() == 'vocal':
             next_song.update({'must_play':1, 'song_name': body[1].lower(), 'song_type': 'vocal'})
-            continue
+            return
         elif len(body) == 2 and body[0].lower() == 'instrumental':
             next_song.update({'must_play':1, 'song_name': body[1].lower(), 'song_type': 'instrumental'})
-            continue
+            return
 
         res = Firebase("https://blazing-fire-4446.firebaseio.com/songs/" + self.bodyData + "/").get()
         #print res
