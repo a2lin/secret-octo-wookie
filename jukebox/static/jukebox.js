@@ -24,7 +24,6 @@ Tracks.prototype.initQueue = function(childSnapShot, prevChildName) {
     this.queue(url, offset);
 }
 
-
 Tracks.prototype.queue = function(url, time) {
     var request = new XMLHttpRequest();
 
@@ -34,13 +33,16 @@ Tracks.prototype.queue = function(url, time) {
     // must maintain 'this' context in the function
     request.onload = (function() {
         this.context.decodeAudioData(request.response, (function(buffer) {
-            this.schedule_track(buffer, time);
+
+            // some data is going to come from the past
+            if (time > Math.floor(new Date().getTime()/1000)) {
+                this.schedule_track(buffer, time);
+            }
         }).bind(this));
     }).bind(this);
 
     request.send();
 }
-
 
 Tracks.prototype.schedule_track = function(audio, time) {
     var s_node = this.context.createBufferSource();

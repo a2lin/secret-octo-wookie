@@ -17,7 +17,7 @@ CROSSFADE_TIME = 5
 class AudioDaemon(Thread):
     def __init__(self):
         self.schedule_table = []
-        self.bpm = 100
+        self.bpm = 140
 
         Thread.__init__(self)
 
@@ -31,12 +31,24 @@ class AudioDaemon(Thread):
             mashup = self.render_next(vo, bg);
             self.schedule(mashup) 
 
-            time.sleep(MIX_DURATION - CROSSFADE_TIME - (time.time() - start_time))
+            time.sleep(MIX_DURATION - CROSSFADE_TIME - int(time.time() - start_time))
 
     ##### MAIN CONTROL FLOW
     def get_next(self):
-        vo_id = "0"
-        bg_id = "1"
+        songs = Firebase(FIREBASE_URL + "songs").get()
+
+        vo_ids = []
+        bg_ids = []
+
+        for song_id in songs:
+            song = songs[song_id]
+            if song["file_type"] == "instrumental":
+                bg_ids += [song["id"]] 
+            else:
+                vo_ids += [song["id"]] 
+
+        vo_id = vo_ids[int(len(vo_ids) * random.random())]
+        bg_id = bg_ids[int(len(bg_ids) * random.random())]
 
         vo_clip = self.slice_song(vo_id)
         bg_clip = self.slice_song(bg_id)
