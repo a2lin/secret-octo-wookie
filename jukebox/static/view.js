@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 var Wave = function(context, analyser) {
     this.audioCtx = context;
     this.analyser = analyser;
