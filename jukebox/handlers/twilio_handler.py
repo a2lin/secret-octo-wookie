@@ -27,15 +27,31 @@ class TwilioHandler(tornado.web.RequestHandler):
 
     def increase_speed(self):
         #TODO XANDER'S CODE
+        speed = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/bpm/").get()
+	new_bpm = speed + 20
+	speedRef = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/")
+        speedRef.update({"bpm" : new_bpm})
         print 'speed is increasing'
     def decrease_speed(self):
         #TODO XANDER'S CODE
+	speed = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/bpm/").get()
+	new_bpm = speed - 20;
+	speedRef = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/")
+	speedRef.update({"bpm" : new_bpm})
         print 'speed is decreasing'
     def increase_volume(self):
         #TODO XANDER'S CODE
+	volume = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/volume/").get()
+	new_vol = volume + 0.2
+	volRef = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/")
+	volRef.update({"volume" : new_vol})
         print 'getting louder'
     def decrease_volume(self):
         #TODO Xander's code
+	volume = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/volume/").get()
+	new_vol = volume - 0.2
+	volRef = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/")
+	volRef.update({"volume" : new_vol})
         print 'getting quieter'
     def consider_suggestions(self):
         res = Firebase("https://blazing-fire-4446.firebaseio.com/songs/" + self.bodyData + "/").get()
