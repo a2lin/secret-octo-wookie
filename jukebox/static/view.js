@@ -1,7 +1,7 @@
+<<<<<<< Updated upstream
 var Wave = function(context, analyser) {
     this.audioCtx = context;
     this.analyser = analyser;
-
     this.analyser.fftSize=256;
     this.bufferLength = this.analyser.frequencyBinCount;
     this.dataArray = new Uint8Array(this.bufferLength);
