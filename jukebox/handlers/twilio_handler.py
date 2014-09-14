@@ -12,12 +12,3 @@ class TwilioHandler(tornado.web.RequestHandler):
         #self.write('Hello, world!')
         data = json.loads(self.request.body)
         print data
-
-
-if __name__ == "__main__":
-    application = tornado.web.Application([
-        (r"/", TwilioHandler),
-    ])
-    application.listen(8888)
-    tornado.ioloop.IOLoop.instance().start()
-
