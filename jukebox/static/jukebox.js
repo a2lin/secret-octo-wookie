@@ -59,7 +59,7 @@ Tracks.prototype.schedule_track = function(audio, time) {
 
     this.fade_transition(node_data);
 
-    s_node.start(time);
+    s_node.start(time - Math.floor(new Date().getTime()/1000));
 }
 
 Tracks.prototype.fade_transition = function(node_data) {

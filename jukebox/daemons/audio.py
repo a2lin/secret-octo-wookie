@@ -13,53 +13,45 @@ WRITE_TOKEN = "hXMjeLwYHyGMZQiVmNjueFxwvGoGEAZshpNFUNVG"
 FIREBASE_URL = "https://blazing-fire-4446.firebaseio.com/"
 MIX_DURATION = 30
 CROSSFADE_TIME = 5
-schedule_table = []
 
 class AudioDaemon(Thread):
-
     def __init__(self):
+        self.schedule_table = []
+        self.bpm = 100
+
         Thread.__init__(self)
 
     def run(self):
         while(1):
             start_time = time.time()
 
-            song_ids = self.get_next();
-            files = [self.slice_song(id) for id in song_ids]
-            mashup = self.collide_songs(files);
+            # grab user input - bpm +-, next song, and whatnot
 
-
+            (vo, bg) = self.get_next();
+            mashup = self.render_next(vo, bg);
             self.schedule(mashup) 
+
             time.sleep(MIX_DURATION - CROSSFADE_TIME - (time.time() - start_time))
 
-    # Return two biased randomly selected song id's from firebase
-    # TODO add grab next logic
+    ##### MAIN CONTROL FLOW
     def get_next(self):
-        return ["0", "1"] 
+        vo_id = "0"
+        bg_id = "1"
 
-    # Returns the file name of a song slice 
-    def slice_song(self, song_id):
-        song = Firebase(FIREBASE_URL + "songs/" + song_id).get()
+        vo_clip = self.slice_song(vo_id)
+        bg_clip = self.slice_song(bg_id)
 
-        file_name = song['file_name']
-        start_time = song['start_time']
+        return (vo_clip, bg_clip)
 
-        new_file = "slice_wav_" + song_id + "_" + str(time.time()) + ".wav"
-        new_path = os.getcwd() + "/tmp/" + new_file
-
-        jukebox.audio_lib.audio_io.slice_wav(file_name, new_path, start_time, start_time + MIX_DURATION) 
-
-        return new_path
-
-    # Collides two wavs file1 and file2. Returns path to crushed file.
-    # TODO make better collider
-    def collide_songs(self, files):
+    def render_next(self, vocals, background):
         name = str(int(time.time()))
-        target_file = os.getcwd() + "/jukebox/static/data/" + name + ".wav"
-        jukebox.mix.mix_tracks(60, files, target_file)
+        target_file = os.path.join(os.getcwd(), "jukebox/static/data/" + name + ".wav")
+
+        beat_count = self.bpm * MIX_DURATION / 60
+        jukebox.mix.mix_tracks(beat_count, [vocals, background], target_file, self.bpm)
+
         return target_file
 
-    # TODO make better scheduler
     def schedule(self, file_path):
         track = Firebase(FIREBASE_URL + "tracks/")
 
@@ -69,9 +61,28 @@ class AudioDaemon(Thread):
 
         track.post(track_data)
 
+    ##### HELPER METHODS
+    def slice_song(self, song_id):
+        song = Firebase(FIREBASE_URL + "songs/" + song_id).get()
+
+        # Assemble fiels from relative paths
+        file_name = song['file_name']
+        file_type = song['file_type']
+        old_path = os.path.join(os.getcwd(), "data", file_type, file_name)
+
+        new_file = "slice_wav_" + song_id + "_" + str(time.time()) + ".wav"
+        new_path = os.path.join(os.getcwd(), "data/clips/" , new_file)
+
+        # Overcorrect because we don't know how many beats there are
+        start_time = song['start_time']
+        jukebox.audio_lib.audio_io.slice_wav(old_path, new_path, start_time, start_time + MIX_DURATION*2)
+
+        return new_path
+
     def play_time(self, file_path):
-        last_play = schedule_table[-1] if schedule_table else 0
+        # Use UNIX times so javascript can discard songs in the past
+        last_play = self.schedule_table[-1] if self.schedule_table else int(time.time())
         new_play = last_play + 25
 
-        schedule_table.append(new_play)
+        self.schedule_table.append(new_play)
         return new_play

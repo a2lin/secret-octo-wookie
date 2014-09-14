@@ -58,3 +58,4 @@ venv/
 
 # Data files for the server
 jukebox/static/data/
+data/
