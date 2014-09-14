@@ -1,4 +1,7 @@
 var Wave = function(context, analyser) {
+    this.speedState= 2;
+    this.speedBase = new Firebase("https://blazing-fire-4446.firebaseio.com/cur_speed/bpm");
+    this.speedBase.on("value", this.onSpeed.bind(this))
     this.audioCtx = context;
     this.analyser = analyser;
     this.analyser.fftSize=256;
@@ -10,6 +13,19 @@ var Wave = function(context, analyser) {
     this.canvasCtx2 = this.canvas2.getContext("2d");
     this.drawVisual;
     this.visualize();
+}
+
+Wave.prototype.onSpeed = function(snapshot) { 
+    console.log(snapshot.val());
+    if (snapshot.val() > 145) {
+        this.speedState = 2;
+    }
+    else if(snapshot.val() < 135) {
+        this.speedState = 0;
+    }
+    else {
+        this.speedState = 1;
+    } 
 }
 
 Wave.prototype.clearCanvas = function() {
@@ -61,7 +77,6 @@ Wave.prototype.drawLineVis = function() {
 
 Wave.prototype.drawVis = function() {
     this.drawVisual = requestAnimationFrame(this.drawVis.bind(this));
-    console.log("hi");
     this.analyser.getByteFrequencyData(this.dataArray);
 
     this.canvasCtx.fillStyle = 'rgb(255, 255, 255)';
@@ -76,8 +91,18 @@ Wave.prototype.drawVis = function() {
     for(var i = 0; i < this.bufferLength; i++) {
         barHeight = this.dataArray[i];
 
-        this.canvasCtx.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
-        this.canvasCtx.fillRect(x, this.canvas.height-barHeight/4, barWidth, barHeight/4);
+        if (this.speedState == 1){
+            this.canvasCtx.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
+        }
+        if (this.speedState == 2){
+            this.canvasCtx.fillStyle = 'rgb(50,' + (barHeight+100) + ',50)';
+        }
+        if (this.speedState == 0){
+            this.canvasCtx.fillStyle = 'rgb(50,50,' + (barHeight+100) + ')';
+        }
+ 
+        this.canvasCtx.fillRect(x, this.canvas.height-barHeight/4, 
+                                barWidth, barHeight/4);
 
         this.canvasCtx2.fillStyle = 'rgb('+ '0,0,0' + ')'; 
         this.canvasCtx2.fillRect(x, 0, barWidth, barHeight/4);
