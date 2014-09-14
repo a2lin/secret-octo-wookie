@@ -2,8 +2,8 @@ var Wave = function() {
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();    
     this.analyser = this.audioCtx.createAnalyser();
     var oscillator = this.audioCtx.createOscillator();
-    oscillator.type = "square";
-    oscillator.frequency.value = 3000;
+    oscillator.type = "sine";
+    oscillator.frequency.value = 3500;
     oscillator.start();
     this.source = oscillator;
 
@@ -25,7 +25,7 @@ Wave.prototype.visualize = function() {
     this.bufferLength = this.analyser.frequencyBinCount;
     this.dataArray = new Uint8Array(this.bufferLength);
     this.clearCanvas();
-    this.drawLineVis(); 
+    this.drawVis(); 
 }
 
 Wave.prototype.drawLineVis = function() {
@@ -77,7 +77,7 @@ Wave.prototype.drawVis = function() {
     for(var i = 0; i < this.bufferLength; i++) {
         barHeight = this.dataArray[i];
 
-        this.canvasCtx.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
+        this.canvasCtx.fillStyle = 'rgb('+ '0,0,0' + ')'; 
         this.canvasCtx.fillRect(x, this.canvas.height-barHeight/2, barWidth, barHeight/2);
 
         x += barWidth + 1;
