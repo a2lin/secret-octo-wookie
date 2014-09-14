@@ -14,6 +14,7 @@ var Tracks = function() {
        throw new Error('AudioContext not supported. :(');
     }
 
+    this.analyser = this.context.createAnalyser();
     this.fb_tracks.on("child_added", this.initQueue.bind(this));
 }
 
@@ -44,11 +45,13 @@ Tracks.prototype.queue = function(url, time) {
 Tracks.prototype.schedule_track = function(audio, time) {
     var s_node = this.context.createBufferSource();
     var g_node = this.context.createGain();
+    var a_node = this.analyser;
     var d_node = this.context.destination;
 
     s_node.buffer = audio;
     s_node.connect(g_node);
-    g_node.connect(d_node);
+    g_node.connect(a_node);
+    a_node.connect(d_node);
 
     var node_data = {}
     node_data["audio"] = audio;
