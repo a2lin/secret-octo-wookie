@@ -4,7 +4,6 @@ from firebase import Firebase
 
 import time
 import random
-import json
 import os
 
 import jukebox.lib.audio_io
@@ -13,9 +12,9 @@ import jukebox.mix
 WRITE_TOKEN = "hXMjeLwYHyGMZQiVmNjueFxwvGoGEAZshpNFUNVG"
 FIREBASE_URL = "https://blazing-fire-4446.firebaseio.com/"
 MIX_DURATION = 30
+schedule_table = []
 
 class AudioDaemon(Thread):
-    schedule_table = []
 
     def __init__(self):
         Thread.__init__(self)
@@ -30,7 +29,7 @@ class AudioDaemon(Thread):
 
 
             self.schedule(mashup) 
-            sleep(25 - (time.time() - start_time))
+            time.sleep(25 - (time.time() - start_time))
 
     # Return two biased randomly selected song id's from firebase
     # TODO add grab next logic
@@ -54,20 +53,20 @@ class AudioDaemon(Thread):
     # Collides two wavs file1 and file2. Returns path to crushed file.
     # TODO make better collider
     def collide_songs(self, files):
-        target_file = os.getcwd() + "/static/data/330.wav"
-        jukebox.mix.main(40, files, target_file)
+        name = str(int(time.time()))
+        target_file = os.getcwd() + "/jukebox/static/data/" + name + ".wav"
+        jukebox.mix.mix_tracks(60, files, target_file)
         return target_file
 
     # TODO make better scheduler
     def schedule(self, file_path):
-        key = str(time.time())
-        track = Firebase(FIREBASE_URL + "tracks/" + key, auth_token = WRITE_TOKEN)
+        track = Firebase(FIREBASE_URL + "tracks/")
 
         track_data = {}
-        track_data["file_path"] = file_path
+        track_data["url"] = file_path.replace(os.path.join(os.getcwd(), "jukebox"), "")
         track_data["offset"] = self.play_time(file_path)
 
-        track.put(json.dump(track_data))
+        track.post(track_data)
 
     def play_time(self, file_path):
         last_play = schedule_table[-1] if schedule_table else 0
