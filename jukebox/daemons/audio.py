@@ -62,6 +62,9 @@ class AudioDaemon(Thread):
         beat_count = self.bpm * MIX_DURATION / 60
         jukebox.mix.mix_tracks(beat_count, [vocals, background], target_file, self.bpm)
 
+        os.remove(vocals)
+        os.remove(background)
+
         return target_file
 
     def schedule(self, file_path):
