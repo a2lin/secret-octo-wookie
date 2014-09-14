@@ -55,7 +55,9 @@ class AudioDaemon(Thread):
 
         next_song = Firebase(FIREBASE_URL + "next_song/")
         song_name = next_song.get()['song_name'] 
+        print name_to_id
         if next_song.get()['must_play'] and song_name in name_to_id:
+            print "FORCE SONG SWITCH", song_name
             if next_song.get()['song_type'] == 'vocal':
                 vo_id = name_to_id[song_name]
             else:
