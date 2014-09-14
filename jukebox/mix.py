@@ -33,7 +33,7 @@ def keyshift(main_key, song_key):
         keyshift -= 12
     return keyshift
 
-def main(num_beats, file_names, outfile):
+def mix_tracks(num_beats, file_names, outfile, bpm=None, dbpm=0):
     # file_names is an array of file names
     aud = []
     for file_path in file_names:
@@ -46,6 +46,8 @@ def main(num_beats, file_names, outfile):
     volume_norm = []
     aud = sorted(aud, key=lambda a: a.analysis.loudness, reverse=True) # Sort from softest to loudest.
     first_track = aud[0].analysis
+    default_tempo = first_track.tempo.get('value', 100)
+
     main_key = first_track.key.get('value')
 
     for track in aud:
@@ -91,7 +93,11 @@ def main(num_beats, file_names, outfile):
             b_audio = b.render()
 
             # modifier.shiftPitchSemiTones(b_audio, semitones=keyshift(main_key, song.key.get('value'))) # Fix pitch
+
             scaled_beat = dirac.timeScale(b_audio.data, desired_dur * 1.0 / b.duration) # Fix duration for smoothing
+            if bpm:
+                # print bpm, dbpm, w, num_beats, default_tempo
+                scaled_beat = dirac.timeScale(scaled_beat, default_tempo / (bpm + dbpm * w * 1.0 / num_beats)) # Speed changes
             scaled_beat *= norm # Normalize volume
 
             ts = audio.AudioData(ndarray=scaled_beat, shape=scaled_beat.shape, sampleRate=aud[0].sampleRate, numChannels=scaled_beat.shape[1])
@@ -125,5 +131,5 @@ if __name__ == '__main__':
     except:
         print usage
         sys.exit(-1)
-    main(num_beats, file_list, outfile)
+    mix_tracks(num_beats, file_list, outfile, None, 0)
 
