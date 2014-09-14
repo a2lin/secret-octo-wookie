@@ -44,7 +44,7 @@ class AudioDaemon(Thread):
 
         for song_id in songs:
             song = songs[song_id]
-            name_to_id[song['song_name']] = song_id
+            name_to_id[song['song_name'].lower()] = song_id
             if song["file_type"] == "instrumental":
                 bg_ids += [song["id"]] 
             else:
