@@ -25,7 +25,7 @@ class AudioDaemon(Thread):
         while(1):
             start_time = time.time()
 
-            # grab user input - bpm +-, next song, and whatnot
+            self.bpm = Firebase(FIREBASE_URL + "metadata/bpm").get()
 
             (vo, bg) = self.get_next();
             mashup = self.render_next(vo, bg);

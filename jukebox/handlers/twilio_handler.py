@@ -4,14 +4,11 @@ import json
 import os
 from firebase import Firebase
 
+METADATA_URL = "https://blazing-fire-4446.firebaseio.com/metadata/"
 class TwilioHandler(tornado.web.RequestHandler):
     def get(self):
-        #self.render("home.html")
         db = Firebase(os.path.join(jukebox.config.FIREBASE_URL, "songs")).get()
-        #result = db.get("/test", None)
-        #self.write('Hello, world!')
         self.bodyData = self.get_argument('Body', True)
-	#print bodyData
 
 	if self.bodyData.lower() == 'faster':
 	    self.increase_speed()
@@ -24,35 +21,27 @@ class TwilioHandler(tornado.web.RequestHandler):
 	else:
 	    self.consider_suggestions()
 
-
+    # input change methods 
     def increase_speed(self):
-        #TODO XANDER'S CODE
-        speed = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/bpm/").get()
-	new_bpm = speed + 20
-	speedRef = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/")
-        speedRef.update({"bpm" : new_bpm})
-        print 'speed is increasing'
+        speed = Firebase(METADATA_URL + "bpm").get()
+	speedRef = Firebase(METADATA_URL + "bpm")
+        speedRef.update(speed + 20)
+
     def decrease_speed(self):
-        #TODO XANDER'S CODE
-	speed = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/bpm/").get()
-	new_bpm = speed - 20;
-	speedRef = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/")
-	speedRef.update({"bpm" : new_bpm})
-        print 'speed is decreasing'
+        speed = Firebase(METADATA_URL + "bpm").get()
+	speedRef = Firebase(METADATA_URL + "bpm")
+        speedRef.update(speed - 20)
+
     def increase_volume(self):
-        #TODO XANDER'S CODE
-	volume = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/volume/").get()
-	new_vol = volume + 0.2
-	volRef = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/")
-	volRef.update({"volume" : new_vol})
-        print 'getting louder'
+        volume= Firebase(METADATA_URL + "volume").get()
+	volRef = Firebase(METADATA_URL + "volume")
+        volRef.update(volume + 0.2)
+
     def decrease_volume(self):
-        #TODO Xander's code
-	volume = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/volume/").get()
-	new_vol = volume - 0.2
-	volRef = Firebase("https://blazing-fire-4446.firebaseio.com/songs/inst1/")
-	volRef.update({"volume" : new_vol})
-        print 'getting quieter'
+        volume= Firebase(METADATA_URL + "volume").get()
+	volRef = Firebase(METADATA_URL + "volume")
+        volRef.update(volume - 0.2)
+
     def consider_suggestions(self):
         res = Firebase("https://blazing-fire-4446.firebaseio.com/songs/" + self.bodyData + "/").get()
         #print res
@@ -66,4 +55,3 @@ class TwilioHandler(tornado.web.RequestHandler):
             print curRNG
 	    rngREF = Firebase("https://blazing-fire-4446.firebaseio.com/songs/" + self.bodyData + "/")
             rngREF.update({"RNG": curRNG})		
-	#print 'analyzing suggestions'
