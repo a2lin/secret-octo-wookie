@@ -8,6 +8,7 @@ var Wave = function(context, analyser) {
     this.canvasCtx = this.canvas.getContext("2d");
     this.drawVisual;
     this.visualize();
+    this.edges = new Edges();
 }
 
 Wave.prototype.clearCanvas = function() {

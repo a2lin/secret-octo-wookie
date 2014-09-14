@@ -1,38 +1,26 @@
 // Edges around the central circle ring that respond to events by getting larger.
 var Edges = function() {
-  
+    this.expandedsize = {"#uc": "-170%", "#ll": "-95%", "#lr": "-24%"}
+    this.shrunksize = {"#uc": "-180%", "#ll": "-100%", "#lr": "0"}
 }
 
 Edges.prototype.expand = function(selector){
-    console.log(String(parseFloat($(selector).attr("stroke-dashoffset"))+3) + "%")
     d3.select(selector)
     .transition()
-    .duration(500)
-    .attr("r", "46")
-    .attr("stroke-width", "6");
+    .duration(250)
+    .attr("stroke-dashoffset", this.expandedsize[selector])
 
-//    .attrTween("stroke-dasharray", function(d,i,a) {
-  //      console.log(a);
-   //     return d3.interpolate(a, "34% 800%");
-   // });
 }
 
 Edges.prototype.shrink = function(selector){
-    console.log(String(parseFloat($(selector).attr("stroke-dashoffset"))+6) + "%")
     d3.select(selector)
     .transition()
-    .duration(500)
-    .attr("r", "44")
-    .attr("stroke-width", "4");
-    //.attr("stroke-dashoffset", String(parseFloat($(selector).attr("stroke-dashoffset"))+3) + "%")
-    //.attrTween("stroke-dasharray", function(d,i,a) {
-     //   console.log(a);
-      //  return d3.interpolate(a, "34% 800%");
-    //});
+    .duration(250)
+    .attr("stroke-dashoffset", this.shrunksize[selector])
 }
 
 Edges.prototype.blink = function(selector){
     this.expand(selector);
-    setTimeout((function(){this.shrink(selector)}).bind(this),500);
+    setTimeout((function(){this.shrink(selector)}).bind(this),250);
 }
 
