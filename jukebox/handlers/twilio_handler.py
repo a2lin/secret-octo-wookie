@@ -11,17 +11,17 @@ class TwilioHandler(tornado.web.RequestHandler):
         db = Firebase(os.path.join(jukebox.config.FIREBASE_URL, "songs")).get()
         self.bodyData = self.get_argument('Body', True)
 
-	if self.bodyData.lower() == 'faster':
-        print "FASTERRRRRRRRRRRRRRRRRRRRRRR"
-	    self.increase_speed()
-	elif self.bodyData.lower() == 'slower':
-	    self.decrease_speed()
-	elif self.bodyData.lower() == 'louder':
-	    self.increase_volume()
-	elif self.bodyData.lower() == 'quieter':
-	    self.decrease_volume()
-	else:
-	    self.consider_suggestions()
+    	if self.bodyData.lower() == 'faster':
+            print "FASTERRRRRRRRRRRRRRRRRRRRRRR"
+    	    self.increase_speed()
+    	elif self.bodyData.lower() == 'slower':
+    	    self.decrease_speed()
+    	elif self.bodyData.lower() == 'louder':
+    	    self.increase_volume()
+    	elif self.bodyData.lower() == 'quieter':
+    	    self.decrease_volume()
+    	else:
+    	    self.consider_suggestions()
 
     # input change methods 
     def increase_speed(self):
