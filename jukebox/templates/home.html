@@ -3,7 +3,9 @@
     <head>
         <script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.js"></script>
         <script src="/static/view.js"></script>
+        <script src="/static/edges.js"></script>
         <script src="/static/jukebox.js"></script>
         <link rel="stylesheet" type="text/css" href="/static/view.css" />
     </head>
@@ -15,10 +17,17 @@
                     </canvas>
                 </div>
                 <svg viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" stroke="black" stroke-width="2" fill=white />
+                    <circle id="base" cx="50" cy="50" r="42" stroke="black" stroke-width="2" 
+                        fill="none" />
+                    <circle id="lr" cx="50" cy="50" r="44" stroke="black" stroke-width="4" 
+                        fill="none" stroke-dasharray="34% 800%" />
+                    <circle id="ll" cx="50" cy="50" r="44" stroke="black" stroke-width="4" fill="none"
+                        stroke-dasharray="34% 800%" stroke-dashoffset="-100%" />
+                    <circle id="uc" cx="50" cy="50" r="44" stroke="black" stroke-width="4" fill="none"
+                        stroke-dasharray="34% 800%" stroke-dashoffset="-180%" />
                 </svg>
             </div>
         </div>
-        <script> $(document).ready(function() {w = new Wave();}) </script>
+        <script> $(document).ready(function() {t = new Tracks(); w = new Wave(t.context, t.analyser);}) </script>
     </body>
 </html>

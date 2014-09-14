@@ -1,13 +1,6 @@
-var Wave = function() {
-    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();    
-    this.analyser = this.audioCtx.createAnalyser();
-    var oscillator = this.audioCtx.createOscillator();
-    oscillator.type = "sine";
-    oscillator.frequency.value = 3500;
-    oscillator.start();
-    this.source = oscillator;
-
-    this.source.connect(this.analyser);
+var Wave = function(context, analyser) {
+    this.audioCtx = context;
+    this.analyser = analyser;
     this.analyser.fftSize=256;
     this.bufferLength = this.analyser.frequencyBinCount;
     this.dataArray = new Uint8Array(this.bufferLength);
