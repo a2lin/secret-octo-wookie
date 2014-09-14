@@ -9,6 +9,7 @@ from jukebox.handlers.home import HomeHandler
 from jukebox.handlers.debug import DebugHandler
 from jukebox.handlers.music_update import MusicUpdateHandler
 
+from jukebox.handlers.twilio_handler import TwilioHandler
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -18,11 +19,11 @@ class Application(tornado.web.Application):
         handlers=[
             (r"/play", PlayHandler),
             (r"/stats", StatsHandler),
-
+            (r"/twilio", TwilioHandler),
             #TODO remove update and debug
             (r"/update", MusicUpdateHandler),
             (r"/debug", DebugHandler),
-
+    
             (r"/", HomeHandler),
         ]
 
