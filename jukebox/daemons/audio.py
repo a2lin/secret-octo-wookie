@@ -31,7 +31,7 @@ class AudioDaemon(Thread):
             mashup = self.render_next(vo, bg);
             self.schedule(mashup) 
 
-            time.sleep(MIX_DURATION - CROSSFADE_TIME - int(time.time() - start_time))
+            time.sleep(max(MIX_DURATION - CROSSFADE_TIME - int(time.time() - start_time), 0))
 
     ##### MAIN CONTROL FLOW
     def get_next(self):
