@@ -60,7 +60,7 @@ Wave.prototype.drawVis = function() {
     console.log("hi");
     this.analyser.getByteFrequencyData(this.dataArray);
 
-    this.canvasCtx.fillStyle = 'rgb(255, 255, 255)';
+    //this.canvasCtx.fillStyle = 'rgb(255, 255, 255)';
     this.canvasCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     var barWidth = (this.canvas.width / this.bufferLength) * 2.5;

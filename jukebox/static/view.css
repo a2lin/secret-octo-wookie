@@ -7,7 +7,6 @@
 #left-outer {
     width: 22.5%;
     height: 100%;
-    background: purple;
     float: left;
 }
 
@@ -33,6 +32,16 @@
     margin-left: 24%;
 }
 
+#slider-left-text {
+    margin-top: 250%;
+    width: 100%;
+    font-size: 2em;
+    -moz-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    text-align: center;
+    display: block;
+}
+
 #slider-left {
     width: 10%;
     height: 60%;
@@ -47,6 +56,17 @@
     background: gray;
     float: left;
     margin-left: 5%;
+}
+
+#slider-right-text{
+    margin-top: 250%;
+    width: 100%;
+    font-size: 2em;
+    font-family: 'Droid Sans', sans-serif;
+    -moz-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    text-align: center;
+    display: block;
 }
 
 #slider-right {
@@ -73,6 +93,16 @@
     position: absolute;
 }
 
+#circle-outer #wave2 {
+    top: 63%;
+    width: 38.5%;
+    margin-left: 8%;
+    height: 20%;
+    background: orange;
+    position: absolute;
+
+}
+
 #right-outer{
     width: 22.5%;
     height: 100%;
@@ -83,6 +113,7 @@
 body{
     height: 100%;
     font-family: 'Open Sans';
+    background: white;
 }
 
 html{

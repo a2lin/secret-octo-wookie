@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
+        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Sans">
+        <link rel="stylesheet" type="text/css" href="/static/view.css" />
+
         <script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.js"></script>
         <script src="/static/view.js"></script>
         <script src="/static/edges.js"></script>
         <script src="/static/jukebox.js"></script>
-        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
-        <link rel="stylesheet" type="text/css" href="/static/view.css" />
+        <script src="js/jquery/jquery.min.js"></script>
+        <script src="js/jquery/jquery.widget.min.js"></script>
+        <script src="js/metro/metro.min.js"></script> 
     </head>
     <body>
         <div id="outer">
@@ -19,7 +24,7 @@
                 <div id="sliders-outer">
                     <div id="slider-left-text-outer">
                         <div id="slider-left-text">
-                            &nbsp;
+                            Faster 
                         </div>
                     </div>
                     <div id="slider-left">
@@ -27,7 +32,7 @@
                     </div>
                     <div id="slider-right-text-outer">
                         <div id="slider-right-text">
-                            &nbsp;
+                            Louder
                         </div>
                     </div>
                     <div id="slider-right">
@@ -39,6 +44,8 @@
                 <div id=circle>
                     <div id=wave-outer>
                         <canvas id=wave>
+                        </canvas>
+                        <canvas id=wave2>
                         </canvas>
                     </div>
                     <svg viewBox="0 0 100 100">
