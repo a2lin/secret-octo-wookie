@@ -12,7 +12,7 @@ class TwilioHandler(tornado.web.RequestHandler):
         self.bodyData = self.get_argument('Body', True)
 
     	if self.bodyData.lower() == 'faster':
-            print "FASTERRRRRRRRRRRRRRRRRRRRRRR"
+            print "FASTER!"
     	    self.increase_speed()
     	elif self.bodyData.lower() == 'slower':
     	    self.decrease_speed()
@@ -25,17 +25,11 @@ class TwilioHandler(tornado.web.RequestHandler):
 
     # input change methods 
     def increase_speed(self):
-        # speed = Firebase(METADATA_URL + "bpm").get()
-        # speedRef = Firebase(METADATA_URL + "bpm")
-        # speedRef.update(speed + 20)
         cur_speed = Firebase(FIREBASE_URL + 'cur_speed/')
         bpm = cur_speed.get()['bpm']
         cur_speed.update({'bpm':bpm, 'dbpm':20})
 
     def decrease_speed(self):
-        # speed = Firebase(METADATA_URL + "bpm").get()
-        # speedRef = Firebase(METADATA_URL + "bpm")
-        # speedRef.update(speed - 20)
         cur_speed = Firebase(FIREBASE_URL + 'cur_speed/')
         bpm = cur_speed.get()['bpm']
         cur_speed.update({'bpm':bpm, 'dbpm':-20})
