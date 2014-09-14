@@ -4,6 +4,7 @@ import json
 import os
 from firebase import Firebase
 
+FIREBASE_URL = "https://blazing-fire-4446.firebaseio.com/"
 METADATA_URL = "https://blazing-fire-4446.firebaseio.com/metadata/"
 class TwilioHandler(tornado.web.RequestHandler):
     def get(self):
@@ -23,29 +24,44 @@ class TwilioHandler(tornado.web.RequestHandler):
 
     # input change methods 
     def increase_speed(self):
-        speed = Firebase(METADATA_URL + "bpm").get()
-	speedRef = Firebase(METADATA_URL + "bpm")
-        speedRef.update(speed + 20)
+        # speed = Firebase(METADATA_URL + "bpm").get()
+        # speedRef = Firebase(METADATA_URL + "bpm")
+        # speedRef.update(speed + 20)
+        cur_speed = Firebase(FIREBASE_URL + 'cur_speed/')
+        bpm = cur_speed.get()['bpm']
+        cur_speed.update({'bpm':bpm, 'dbpm':20})
 
     def decrease_speed(self):
-        speed = Firebase(METADATA_URL + "bpm").get()
-	speedRef = Firebase(METADATA_URL + "bpm")
-        speedRef.update(speed - 20)
+        # speed = Firebase(METADATA_URL + "bpm").get()
+        # speedRef = Firebase(METADATA_URL + "bpm")
+        # speedRef.update(speed - 20)
+        cur_speed = Firebase(FIREBASE_URL + 'cur_speed/')
+        bpm = cur_speed.get()['bpm']
+        cur_speed.update({'bpm':bpm, 'dbpm':-20})
 
     def increase_volume(self):
         volume= Firebase(METADATA_URL + "volume").get()
-	volRef = Firebase(METADATA_URL + "volume")
+        volRef = Firebase(METADATA_URL + "volume")
         volRef.update(volume + 0.2)
 
     def decrease_volume(self):
         volume= Firebase(METADATA_URL + "volume").get()
-	volRef = Firebase(METADATA_URL + "volume")
+        volRef = Firebase(METADATA_URL + "volume")
         volRef.update(volume - 0.2)
 
     def consider_suggestions(self):
+        body = self.bodyData.split(" ")
+        next_song = Firebase(FIREBASE_URL + 'next_song/')
+        if len(body) == 2 and body[0].lower() == 'vocal':
+            next_song.update({'must_play':1, 'song_name': body[1].lower(), 'song_type': 'vocal'})
+            continue
+        elif len(body) == 2 and body[0].lower() == 'instrumental':
+            next_song.update({'must_play':1, 'song_name': body[1].lower(), 'song_type': 'instrumental'})
+            continue
+
         res = Firebase("https://blazing-fire-4446.firebaseio.com/songs/" + self.bodyData + "/").get()
         #print res
-	if not res:
+        if not res:
             curFB = Firebase("https://blazing-fire-4446.firebaseio.com/songs/")
             curFB.push({'RNG':1, 'file_name':"testFN", 'file_type':"instrumental", 'id':self.bodyData, 'song_name':"testFN", 'start_time':30})
         else:
@@ -53,5 +69,5 @@ class TwilioHandler(tornado.web.RequestHandler):
             print curRNG
             curRNG = curRNG + 1
             print curRNG
-	    rngREF = Firebase("https://blazing-fire-4446.firebaseio.com/songs/" + self.bodyData + "/")
+            rngREF = Firebase("https://blazing-fire-4446.firebaseio.com/songs/" + self.bodyData + "/")
             rngREF.update({"RNG": curRNG})		

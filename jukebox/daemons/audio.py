@@ -18,6 +18,7 @@ class AudioDaemon(Thread):
     def __init__(self):
         self.schedule_table = []
         self.bpm = 140
+        self.dbpm = 0
 
         Thread.__init__(self)
 
@@ -35,6 +36,7 @@ class AudioDaemon(Thread):
 
     ##### MAIN CONTROL FLOW
     def get_next(self):
+        name_to_id = {}
         songs = Firebase(FIREBASE_URL + "songs").get()
 
         vo_ids = []
@@ -42,6 +44,7 @@ class AudioDaemon(Thread):
 
         for song_id in songs:
             song = songs[song_id]
+            name_to_id[song['song_name']] = song_id
             if song["file_type"] == "instrumental":
                 bg_ids += [song["id"]] 
             else:
@@ -49,6 +52,15 @@ class AudioDaemon(Thread):
 
         vo_id = vo_ids[int(len(vo_ids) * random.random())]
         bg_id = bg_ids[int(len(bg_ids) * random.random())]
+
+        next_song = Firebase(FIREBASE_URL + "next_song/")
+        song_name = next_song.get()['song_name'] 
+        if next_song.get()['must_play'] and song_name in name_to_id:
+            if next_song.get()['song_type'] == 'vocal':
+                vo_id = name_to_id[song_name]
+            else:
+                bg_id = name_to_id[song_name]
+            next_song.update({'must_play':0})
 
         vo_clip = self.slice_song(vo_id)
         bg_clip = self.slice_song(bg_id)
@@ -60,7 +72,11 @@ class AudioDaemon(Thread):
         target_file = os.path.join(os.getcwd(), "jukebox/static/data/" + name + ".wav")
 
         beat_count = self.bpm * MIX_DURATION / 60
-        jukebox.mix.mix_tracks(beat_count, [vocals, background], target_file, self.bpm)
+        cur_speed = Firebase(FIREBASE_URL + "cur_speed/")
+        bpm = cur_speed.get()['bpm']
+        dbpm = cur_speed.get()['dbpm']
+        jukebox.mix.mix_tracks(beat_count, [vocals, background], target_file, bpm, dbpm)
+        cur_speed.update({'bpm':bpm+dbpm, 'dbpm':0})
 
         return target_file
 
