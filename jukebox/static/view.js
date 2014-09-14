@@ -5,13 +5,17 @@ var Wave = function(context, analyser) {
     this.bufferLength = this.analyser.frequencyBinCount;
     this.dataArray = new Uint8Array(this.bufferLength);
     this.canvas = document.querySelector('#wave');
+    this.canvas2 = document.querySelector('#wave2');
     this.canvasCtx = this.canvas.getContext("2d");
+    this.canvasCtx2 = this.canvas2.getContext("2d");
     this.drawVisual;
     this.visualize();
 }
 
 Wave.prototype.clearCanvas = function() {
     this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.canvasCtx2.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
 }
 
 Wave.prototype.visualize = function() {
@@ -61,7 +65,9 @@ Wave.prototype.drawVis = function() {
     this.analyser.getByteFrequencyData(this.dataArray);
 
     this.canvasCtx.fillStyle = 'rgb(255, 255, 255)';
+    this.canvasCtx2.fillStyle= 'rgb(255, 255, 255)';
     this.canvasCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.canvasCtx2.fillRect(0, 0, this.canvas2.width, this.canvas2.height);
 
     var barWidth = (this.canvas.width / this.bufferLength) * 2.5;
     var barHeight;
@@ -70,10 +76,13 @@ Wave.prototype.drawVis = function() {
     for(var i = 0; i < this.bufferLength; i++) {
         barHeight = this.dataArray[i];
 
-        this.canvasCtx.fillStyle = 'rgb('+ '0,0,0' + ')'; 
-        this.canvasCtx.fillRect(x, this.canvas.height-barHeight/2, barWidth, barHeight/2);
+        this.canvasCtx.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
+        this.canvasCtx.fillRect(x, this.canvas.height-barHeight/4, barWidth, barHeight/4);
+
+        this.canvasCtx2.fillStyle = 'rgb('+ '0,0,0' + ')'; 
+        this.canvasCtx2.fillRect(x, 0, barWidth, barHeight/4);
 
         x += barWidth + 1;
-    }     
+    }
 }
 

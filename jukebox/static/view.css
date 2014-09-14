@@ -6,10 +6,19 @@
 }
 
 #circle-outer #wave {
-    top: 43%;
+    top: 36%;
     width: 38.5%;
     margin-left: 8%;
-    height: 20%;
+    height: 15%;
+    background: orange;
+    position: absolute;
+}
+
+#circle-outer #wave2 {
+    top: 51%;
+    width: 38.5%;
+    margin-left: 8%;
+    height: 15%;
     background: orange;
     position: absolute;
 }
