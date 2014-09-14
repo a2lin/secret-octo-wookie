@@ -7,27 +7,60 @@
         <script src="/static/view.js"></script>
         <script src="/static/edges.js"></script>
         <script src="/static/jukebox.js"></script>
+        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
         <link rel="stylesheet" type="text/css" href="/static/view.css" />
     </head>
     <body>
-        <div id=circle-outer>
-            <div id=circle>
-                <div id=wave-outer>
-                    <canvas id=wave>
-                    </canvas>
+        <div id="outer">
+            <div id="left-outer">
+                <div id="info-pane">
+                    &nbsp;
                 </div>
-                <svg viewBox="0 0 100 100">
-                    <circle id="base" cx="50" cy="50" r="42" stroke="black" stroke-width="2" 
-                        fill="none" />
-                    <circle id="lr" cx="50" cy="50" r="44" stroke="black" stroke-width="4" 
-                        fill="none" stroke-dasharray="34% 800%" />
-                    <circle id="ll" cx="50" cy="50" r="44" stroke="black" stroke-width="4" fill="none"
-                        stroke-dasharray="34% 800%" stroke-dashoffset="-100%" />
-                    <circle id="uc" cx="50" cy="50" r="44" stroke="black" stroke-width="4" fill="none"
-                        stroke-dasharray="34% 800%" stroke-dashoffset="-180%" />
-                </svg>
+                <div id="sliders-outer">
+                    <div id="slider-left-text-outer">
+                        <div id="slider-left-text">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div id="slider-left">
+                        &nbsp;
+                    </div>
+                    <div id="slider-right-text-outer">
+                        <div id="slider-right-text">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div id="slider-right">
+                        &nbsp;
+                    </div>
+                </div>
+            </div>
+            <div id=circle-outer>
+                <div id=circle>
+                    <div id=wave-outer>
+                        <canvas id=wave>
+                        </canvas>
+                    </div>
+                    <svg viewBox="0 0 100 100">
+                        <circle id="base" cx="50" cy="50" r="42" stroke="black" stroke-width="2" 
+                            fill="none" />
+                        <circle id="lr" cx="50" cy="50" r="44" stroke="black" stroke-width="4" 
+                            fill="none" stroke-dasharray="34% 800%" />
+                        <circle id="ll" cx="50" cy="50" r="44" stroke="black" stroke-width="4" fill="none"
+                            stroke-dasharray="34% 800%" stroke-dashoffset="-100%" />
+                        <circle id="uc" cx="50" cy="50" r="44" stroke="black" stroke-width="4" fill="none"
+                            stroke-dasharray="34% 800%" stroke-dashoffset="-180%" />
+                    </svg>
+                </div>
+            </div>
+            <div id=right-outer>
+                <div id=message-queue>
+                    &nbsp;
+                </div>
             </div>
         </div>
-        <script> $(document).ready(function() {t = new Tracks(); w = new Wave(t.context, t.analyser);}) </script>
+        <script> $(document).ready(
+                    function() {t = new Tracks(); w = new Wave(t.context, t.analyser);}) 
+        </script>
     </body>
 </html>
