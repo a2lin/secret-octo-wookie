@@ -60,7 +60,7 @@ class AudioDaemon(Thread):
                 vo_id = name_to_id[song_name]
             else:
                 bg_id = name_to_id[song_name]
-            next_song.update({'must_play':0})
+            next_song.update({'must_play':0, 'song_name':-1})
 
         vo_clip = self.slice_song(vo_id)
         bg_clip = self.slice_song(bg_id)

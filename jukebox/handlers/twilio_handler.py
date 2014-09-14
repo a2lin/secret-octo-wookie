@@ -12,6 +12,7 @@ class TwilioHandler(tornado.web.RequestHandler):
         self.bodyData = self.get_argument('Body', True)
 
 	if self.bodyData.lower() == 'faster':
+        print "FASTERRRRRRRRRRRRRRRRRRRRRRR"
 	    self.increase_speed()
 	elif self.bodyData.lower() == 'slower':
 	    self.decrease_speed()
@@ -53,6 +54,7 @@ class TwilioHandler(tornado.web.RequestHandler):
         body = self.bodyData.split(" ")
         next_song = Firebase(FIREBASE_URL + 'next_song/')
         if len(body) == 2 and body[0].lower() == 'vocal':
+            print "NEW VOCALS YEAH"
             next_song.update({'must_play':1, 'song_name': body[1].lower(), 'song_type': 'vocal'})
             return
         elif len(body) == 2 and body[0].lower() == 'instrumental':
