@@ -81,7 +81,6 @@ def mix_tracks(num_beats, file_names, outfile, bpm=None, dbpm=0):
         aligned_beats.append(beats_from_chorus)
 
 
-    modifier = modify.Modify()
     for w in range(num_beats):
         print >> sys.stderr, '.',
         curbeats = []
@@ -92,9 +91,11 @@ def mix_tracks(num_beats, file_names, outfile, bpm=None, dbpm=0):
             b = beats[w%len(beats)]
             b_audio = b.render()
 
-            # modifier.shiftPitchSemiTones(b_audio, semitones=keyshift(main_key, song.key.get('value'))) # Fix pitch
 
-            scaled_beat = dirac.timeScale(b_audio.data, desired_dur * 1.0 / b.duration) # Fix duration for smoothing
+            modifier = modify.Modify(sampleRate=aud[0].sampleRate, numChannels=b_audio.data.shape[1], blockSize=1000000)
+            b_audio = modifier.shiftPitchSemiTones(b_audio, semitones=keyshift(main_key, song.key.get('value'))) # Fix pitch
+
+            scaled_beat = dirac.timeScale(b_audio.data, desired_dur * 1.0 / b_audio.duration) # Fix duration for smoothing
             if bpm:
                 # print bpm, dbpm, w, num_beats, default_tempo
                 scaled_beat = dirac.timeScale(scaled_beat, default_tempo / (bpm + dbpm * w * 1.0 / num_beats)) # Speed changes
@@ -116,7 +117,18 @@ def mix_tracks(num_beats, file_names, outfile, bpm=None, dbpm=0):
     
     print >> sys.stderr, "%f sec for rendering" % (time.time() - then,)
 
+
+def get_similar_tracks(file_path):
+    a = audio.LocalAudioFile(file_path)
+    song = a.analysis
+    tempo = song.tempo.get('value')
+    loudness = song.loudness
+    # energy = song.energy
+    # dance = song.danceability
+    print tempo, loudness
+
 if __name__ == '__main__':
+
     try:
         directory = sys.argv[-3]
         outfile = sys.argv[-2]
@@ -131,5 +143,5 @@ if __name__ == '__main__':
     except:
         print usage
         sys.exit(-1)
-    mix_tracks(num_beats, file_list, outfile, None, 0)
+    mix_tracks(num_beats, file_list, outfile, 120, 0)
 
