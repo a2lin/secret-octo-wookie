@@ -6,12 +6,13 @@ import time
 import random
 import os
 
-import jukebox.lib.audio_io
+import jukebox.audio_lib.audio_io
 import jukebox.mix
 
 WRITE_TOKEN = "hXMjeLwYHyGMZQiVmNjueFxwvGoGEAZshpNFUNVG"
 FIREBASE_URL = "https://blazing-fire-4446.firebaseio.com/"
 MIX_DURATION = 30
+CROSSFADE_TIME = 5
 schedule_table = []
 
 class AudioDaemon(Thread):
@@ -29,7 +30,7 @@ class AudioDaemon(Thread):
 
 
             self.schedule(mashup) 
-            time.sleep(25 - (time.time() - start_time))
+            time.sleep(MIX_DURATION - CROSSFADE_TIME - (time.time() - start_time))
 
     # Return two biased randomly selected song id's from firebase
     # TODO add grab next logic
@@ -46,7 +47,7 @@ class AudioDaemon(Thread):
         new_file = "slice_wav_" + song_id + "_" + str(time.time()) + ".wav"
         new_path = os.getcwd() + "/tmp/" + new_file
 
-        jukebox.lib.audio_io.slice_wav(file_name, new_path, start_time, start_time + MIX_DURATION) 
+        jukebox.audio_lib.audio_io.slice_wav(file_name, new_path, start_time, start_time + MIX_DURATION) 
 
         return new_path
 
