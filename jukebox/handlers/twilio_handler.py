@@ -2,7 +2,7 @@ import tornado.web
 import jukebox.config
 import json
 
-from firebase import firebase
+from firebase import Firebase
 
 class TwilioHandler(tornado.web.RequestHandler):
     def get(self):
