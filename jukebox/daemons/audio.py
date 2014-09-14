@@ -1,12 +1,13 @@
 # Audio Daemon: this process does the audio processing and stuff like queuing up new files
 from threading import Thread
-from jukebox.lib.audio_io import slice_wav
-from jukebox.lib.mix import main as mix
+from firebase import Firebase
 
-import firebase import Firebase
 import time
 import random
 import json
+
+from jukebox.lib.audio_io import slice_wav
+from jukebox.mix import main as mix
 
 WRITE_TOKEN = "hXMjeLwYHyGMZQiVmNjueFxwvGoGEAZshpNFUNVG"
 FIREBASE_URL = "https://blazing-fire-4446.firebaseio.com/"
@@ -19,15 +20,15 @@ class AudioDaemon(Thread):
         Thread.__init__(self)
 
     def run(self):
-        while(true):
+        while(1):
             start_time = time.time()
 
-            songs = pick_songs(self, 2);
-            files = [slice_song(song) for song in songs]
-            mashup, key = collide_songs(files);
+            songs = self.pick_songs(2);
+            files = [self.slice_song(song) for song in songs]
+            mashup, key = self.collide_songs(files);
 
 
-            schedule(mashup) 
+            self.schedule(mashup) 
             sleep(25 - (time.time() - start_time))
 
     # Return two biased randomly selected song id's from firebase
@@ -37,11 +38,11 @@ class AudioDaemon(Thread):
 
         songs = Firebase(FIREBASE_URL + "songs").get()
 
-        for song_id in songs:
-           biased_indices += [songs_id] * songs[song_id]["rng_bias"]
+        for song in songs:
+           biased_indices += [song["id"]] * song["rng_bias"]
 
-        for i in range(len(count)):
-            new_index = biased_indices[len(biased_indices) * random.random()]
+        for i in range(count):
+            new_index = biased_indices[int(len(biased_indices) * random.random())]
 
             result_songs += [new_index]
             biased_indices = [bi for bi in biased_indices if bi is not new_index]
@@ -49,8 +50,8 @@ class AudioDaemon(Thread):
         return result_songs
 
     # Returns the file name of a song slice 
-    def slice_song(song_id):
-        song = Firebase(FIREBASE_URL + "songs/" + song_id).get()
+    def slice_song(self, song_id):
+        song = json.load(Firebase(FIREBASE_URL + "songs/" + song_id).get())
 
         file_name = song['file_name']
         start_time = song['start_time']
@@ -61,22 +62,24 @@ class AudioDaemon(Thread):
         slice_wave(file_name, new_path, start_time, start_time + MIX_DURATION) 
 
     # Collides two wavs file1 and file2. Returns path to crushed file.
-    def collide_songs(file1, file2):
-        # TODO fix this
-        return os.getcwd() + "/../static/data/330.wav"
+    # TODO make better collider
+    def collide_songs(self, files):
+        target_file = os.getcwd() + "/../static/data/330.wav"
+        main(40, files, target_file)
+        return target_file
 
     # TODO make better scheduler
-    def schedule(file_path):
+    def schedule(self, file_path):
         key = str(time.time())
         track = Firebase(FIREBASE_URL + "tracks/" + key, auth_token = WRITE_TOKEN)
 
         track_data = {}
         track_data["file_path"] = file_path
-        track_data["offset"] = play_time(file_path)
+        track_data["offset"] = self.play_time(file_path)
 
         track.put(json.dump(track_data))
 
-    def play_time(file_path):
+    def play_time(self, file_path):
         last_play = schedule_table[-1] if schedule_table else 0
         new_play = last_play + 25
 
