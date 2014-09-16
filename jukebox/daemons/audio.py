@@ -20,10 +20,9 @@ class AudioDaemon(multiprocessing.Process):
         self.schedule_table = []
         self.bpm = 140
         self.dbpm = 0
-        self.exit = multiprocessing.Event()
 
     def run(self):
-        while not self.exit.is_set():
+        while True:
             start_time = time.time()
 
             self.bpm = Firebase(FIREBASE_URL + "metadata/bpm").get()
@@ -33,9 +32,6 @@ class AudioDaemon(multiprocessing.Process):
             self.schedule(mashup) 
 
             time.sleep(max(MIX_DURATION - CROSSFADE_TIME - int(time.time() - start_time), 0))
-
-    def shutdown(self):
-        self.exit.set()
 
     ##### MAIN CONTROL FLOW
     def get_next(self):
