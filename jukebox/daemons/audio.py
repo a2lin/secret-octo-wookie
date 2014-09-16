@@ -1,7 +1,7 @@
 # Audio Daemon: this process does the audio processing and stuff like queuing up new files
-from threading import Thread
 from firebase import Firebase
 
+import multiprocessing
 import time
 import random
 import os
@@ -14,16 +14,16 @@ FIREBASE_URL = "https://blazing-fire-4446.firebaseio.com/"
 MIX_DURATION = 30
 CROSSFADE_TIME = 5
 
-class AudioDaemon(Thread):
+class AudioDaemon(multiprocessing.Process):
     def __init__(self):
+        multiprocessing.Process.__init__(self)
         self.schedule_table = []
         self.bpm = 140
         self.dbpm = 0
-
-        Thread.__init__(self)
+        self.exit = multiprocessing.Event()
 
     def run(self):
-        while(1):
+        while not self.exit.is_set():
             start_time = time.time()
 
             self.bpm = Firebase(FIREBASE_URL + "metadata/bpm").get()
@@ -33,6 +33,9 @@ class AudioDaemon(Thread):
             self.schedule(mashup) 
 
             time.sleep(max(MIX_DURATION - CROSSFADE_TIME - int(time.time() - start_time), 0))
+
+    def shutdown(self):
+        self.exit.set()
 
     ##### MAIN CONTROL FLOW
     def get_next(self):
