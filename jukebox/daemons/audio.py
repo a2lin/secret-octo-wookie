@@ -18,17 +18,19 @@ class AudioDaemon(multiprocessing.Process):
     def __init__(self):
         multiprocessing.Process.__init__(self)
         self.schedule_table = []
-        self.bpm = 140
-        self.dbpm = 0
 
     def run(self):
         while True:
             start_time = time.time()
 
-            self.bpm = Firebase(FIREBASE_URL + "metadata/bpm").get()
+            cur_speed = Firebase(FIREBASE_URL + "cur_speed/")
+            bpm = cur_speed.get()['bpm']
+            dbpm = cur_speed.get()['dbpm']
+
+            cur_speed.update({'bpm':bpm+dbpm, 'dbpm':0})
 
             (vo, bg) = self.get_next();
-            mashup = self.render_next(vo, bg);
+            mashup = self.render_next(vo, bg, bpm, dbpm);
             self.schedule(mashup) 
 
             time.sleep(max(MIX_DURATION - CROSSFADE_TIME - int(time.time() - start_time), 0))
@@ -55,7 +57,6 @@ class AudioDaemon(multiprocessing.Process):
         next_song = Firebase(FIREBASE_URL + "next_song/")
         song_name = next_song.get()['song_name'] 
         if next_song.get()['must_play'] and song_name in name_to_id:
-            print "FORCE SONG SWITCH TO", song_name
             if next_song.get()['song_type'] == 'vocal':
                 vo_id = name_to_id[song_name]
             else:
@@ -67,16 +68,12 @@ class AudioDaemon(multiprocessing.Process):
 
         return (vo_clip, bg_clip)
 
-    def render_next(self, vocals, background):
+    def render_next(self, vocals, background, bpm, dbpm):
         name = str(int(time.time()))
         target_file = os.path.join(os.getcwd(), "jukebox/static/data/" + name + ".wav")
 
-        beat_count = self.bpm * MIX_DURATION / 60
-        cur_speed = Firebase(FIREBASE_URL + "cur_speed/")
-        bpm = cur_speed.get()['bpm']
-        dbpm = cur_speed.get()['dbpm']
+        beat_count = bpm * MIX_DURATION / 60
         jukebox.mix.mix_tracks(beat_count, [vocals, background], target_file, bpm, dbpm)
-        cur_speed.update({'bpm':bpm+dbpm, 'dbpm':0})
 
         os.remove(vocals)
         os.remove(background)
@@ -96,7 +93,7 @@ class AudioDaemon(multiprocessing.Process):
     def slice_song(self, song_id):
         song = Firebase(FIREBASE_URL + "songs/" + song_id).get()
 
-        # Assemble fiels from relative paths
+        # Assemble files from relative paths
         file_name = song['file_name']
         file_type = song['file_type']
         old_path = os.path.join(os.getcwd(), "data", file_type, file_name)
